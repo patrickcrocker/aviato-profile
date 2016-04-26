@@ -3,7 +3,7 @@ resources:
   - name: aviato-profile
     type: git
     source:
-      uri: https://github.com/patrickcrocker/aviato-profile
+      uri: git://10.0.2.2/aviato-profile
       branch: master
 
 jobs:
@@ -14,3 +14,11 @@ jobs:
         trigger: true
       - task: unit
         file: aviato-profile/ci/tasks/unit.yml
+  - name: build
+    serial_groups: [ version ]
+    plan:
+      - get: aviato-profile
+        passed: [ unit ]
+        trigger: true
+      - task: build
+        file: aviato-profile/ci/tasks/build.yml
