@@ -1,0 +1,16 @@
+---
+resources:
+  - name: aviato-profile
+    type: git
+    source:
+      uri: file:///git/aviato-profile
+      branch: master
+
+jobs:
+  - name: unit-test
+    public: true
+    plan:
+      - get: aviato-profile
+        trigger: true
+      - task: unit
+        file: aviato-profile/ci/tasks/unit.yml
