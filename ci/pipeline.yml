@@ -3,11 +3,11 @@ resources:
   - name: aviato-profile
     type: git
     source:
-      uri: file:///git/aviato-profile
+      uri: https://github.com/patrickcrocker/aviato-profile
       branch: master
 
 jobs:
-  - name: unit-test
+  - name: unit
     public: true
     plan:
       - get: aviato-profile
