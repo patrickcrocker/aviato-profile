@@ -1,0 +1,212 @@
+= Aviato Profile API Guide
+Patrick Crocker;
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+[[overview]]
+= Overview
+
+[[overview-http-verbs]]
+== HTTP verbs
+
+Aviato Profile tries to adhere as closely as possible to standard HTTP and REST conventions in its
+use of HTTP verbs.
+
+|===
+| Verb | Usage
+
+| `GET`
+| Used to retrieve a resource
+
+| `POST`
+| Used to create a new resource
+
+| `PATCH`
+| Used to update an existing resource, including partial updates
+
+| `DELETE`
+| Used to delete an existing resource
+|===
+
+[[overview-http-status-codes]]
+== HTTP status codes
+
+Aviato Profile tries to adhere as closely as possible to standard HTTP and REST conventions in its
+use of HTTP status codes.
+
+|===
+| Status code | Usage
+
+| `200 OK`
+| The request completed successfully
+
+| `201 Created`
+| A new resource has been created successfully. The resource's URI is available from the response's
+`Location` header
+
+| `204 No Content`
+| An update to an existing resource has been applied successfully
+
+| `400 Bad Request`
+| The request was malformed. The response body will include an error providing further information
+
+| `404 Not Found`
+| The requested resource did not exist
+|===
+
+[[overview-errors]]
+== Errors
+
+Whenever an error response (status code >= 400) is returned, the body will contain a JSON object
+that describes the problem. The error object has the following structure:
+
+include::{snippets}/error-example/response-fields.adoc[]
+
+For example, a request that attempts to apply a non-existent tag to a person will produce a
+`400 Bad Request` response:
+
+include::{snippets}/error-example/http-response.adoc[]
+
+[[overview-hypermedia]]
+== Hypermedia
+
+Aviato Profile uses hypermedia and resources include links to other resources in their
+responses. Responses are in http://stateless.co/hal_specification.html[Hypertext Application
+from resource to resource.
+Language (HAL)] format. Links can be found beneath the `_links` key. Users of the API should
+not create URIs themselves, instead they should use the above-described links to navigate
+
+[[resources]]
+= Resources
+
+
+
+[[resources-index]]
+== Index
+
+The index provides the entry point into the service.
+
+
+
+[[resources-index-access]]
+=== Accessing the index
+
+A `GET` request is used to access the index
+
+==== Response structure
+
+include::{snippets}/index-example/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/index-example/http-response.adoc[]
+
+
+
+[[resources-index-links]]
+==== Links
+
+include::{snippets}/index-example/links.adoc[]
+
+
+
+[[resources-persons]]
+== Persons
+
+The Persons resources is used to create and list persons
+
+
+
+[[resources-persons-list]]
+=== Listing persons
+
+A `GET` request will list all of the service's persons.
+
+==== Response structure
+
+include::{snippets}/persons-list-example/response-fields.adoc[]
+
+==== Example request
+
+include::{snippets}/persons-list-example/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/persons-list-example/http-response.adoc[]
+
+
+
+[[resources-person-create]]
+=== Creating a person
+
+A `POST` request is used to create a person
+
+==== Request structure
+
+include::{snippets}/person-create-example/request-fields.adoc[]
+
+==== Example request
+
+include::{snippets}/person-create-example/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/person-create-example/http-response.adoc[]
+
+
+
+[[resources-person]]
+== Person
+
+The Person resource is used to retrieve, update, and delete an individual person
+
+
+
+[[resources-person-links]]
+=== Links
+
+include::{snippets}/person-get-example/links.adoc[]
+
+
+
+[[resources-person-retrieve]]
+=== Retrieve a person
+
+A `GET` request will retrieve the details of a person
+
+==== Response structure
+
+include::{snippets}/person-get-example/response-fields.adoc[]
+
+==== Example request
+
+include::{snippets}/person-get-example/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/person-get-example/http-response.adoc[]
+
+
+
+[[resources-person-update]]
+=== Update a person
+
+A `PATCH` request is used to update a person
+
+==== Request structure
+
+include::{snippets}/person-update-example/request-fields.adoc[]
+
+To leave an attribute of a person unchanged, any of the above may be omitted from the request.
+
+==== Example request
+
+include::{snippets}/person-update-example/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/person-update-example/http-response.adoc[]
