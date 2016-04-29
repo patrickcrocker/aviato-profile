@@ -7,18 +7,13 @@ resources:
       branch: master
 
 jobs:
-  - name: unit
+  - name: build-snapshot
     public: true
     plan:
       - get: aviato-profile
         trigger: true
-      - task: unit
-        file: aviato-profile/ci/tasks/unit.yml
-  - name: build
-    serial_groups: [ version ]
-    plan:
-      - get: aviato-profile
-        passed: [ unit ]
-        trigger: true
-      - task: build
+      - task: unit-test
         file: aviato-profile/ci/tasks/build.yml
+        params: &MAVENPARAMS
+          MAVEN_OPTS: {{maven-opts}}
+          MAVEN_CONFIG: {{maven-config}}

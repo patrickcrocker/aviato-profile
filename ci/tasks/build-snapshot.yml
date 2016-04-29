@@ -1,0 +1,23 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: java
+    tag: '8'
+
+params:
+  MAVEN_OPTS: # -Xms256m -Xmx512m
+  MAVEN_CONFIG: "-s aviato-profile/ci/local/settings.xml"
+  MAVEN_BASEDIR: aviato-profile
+
+inputs:
+  - name: aviato-profile
+
+run:
+  path: aviato-profile/mvnw
+  args: [
+    "-f", "aviato-profile/pom.xml",
+    "clean", "deploy"
+  ]
