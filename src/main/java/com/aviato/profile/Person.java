@@ -16,10 +16,6 @@ public class Person {
 
 	private String lastName;
 
-	private String phone;
-
-	private String dob;
-
 	public String getFirstName() {
 		return firstName;
 	}
@@ -34,22 +30,6 @@ public class Person {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
-	public String getDob() {
-		return dob;
-	}
-
-	public void setDob(String dob) {
-		this.dob = dob;
 	}
 
 }

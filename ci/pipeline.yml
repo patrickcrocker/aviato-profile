@@ -12,8 +12,8 @@ jobs:
     plan:
       - get: aviato-profile
         trigger: true
-      - task: unit-test
-        file: aviato-profile/ci/tasks/build.yml
-        params: &MAVENPARAMS
-          MAVEN_OPTS: {{maven-opts}}
-          MAVEN_CONFIG: {{maven-config}}
+      - task: build-snapshot
+        file: aviato-profile/ci/tasks/build-snapshot.yml
+#        params: &MAVENPARAMS
+#          MAVEN_OPTS: { {maven-opts}}
+#          MAVEN_CONFIG: { {maven-config}}

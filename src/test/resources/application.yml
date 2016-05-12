@@ -1,0 +1,5 @@
+spring:
+  # Enable color output for JUnit test cases. Change to detect/disable if your IDE doesn't support this.
+  output:
+    ansi:
+      enabled: always
