@@ -8,8 +8,8 @@ image_resource:
     tag: '8'
 
 params:
-  MAVEN_OPTS: # -Xms256m -Xmx512m
-  MAVEN_CONFIG: "-s aviato-profile/ci/local/settings.xml"
+  MAVEN_OPTS:
+  MAVEN_CONFIG: 
   MAVEN_BASEDIR: aviato-profile
 
 inputs:
