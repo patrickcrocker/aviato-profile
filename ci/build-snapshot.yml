@@ -15,4 +15,4 @@ inputs:
   - name: aviato-profile
 
 run:
-  path: aviato-profile/ci/tasks/build-snapshot.sh
+  path: aviato-profile/ci/build-snapshot.sh

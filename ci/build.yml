@@ -16,4 +16,4 @@ inputs:
   - name: version
 
 run:
-  path: aviato-profile/ci/tasks/build.sh
+  path: aviato-profile/ci/build.sh

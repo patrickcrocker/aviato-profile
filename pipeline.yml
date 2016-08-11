@@ -1,0 +1,47 @@
+---
+mvn-params: &mvn-params
+  MAVEN_OPTS: {{maven-opts}}
+  MAVEN_CONFIG: {{maven-config}}
+
+jobs:
+- name: build
+  public: true
+  plan:
+  - get: aviato-profile
+    trigger: true
+  - get: version
+    params: { pre: rc }
+  - task: build
+    file: aviato-profile/ci/build.yml
+    params:
+      <<: *mvn-params
+  - put: version
+    params: { file: version/number }
+
+- name: test
+  plan:
+  - get: aviato-profile
+    passed: [ build ]
+    trigger: true
+  - task: cf-deploy
+    file: aviato-profile/ci/cf-deploy.yml
+    params:
+      <<: *mvn-params
+
+resources:
+- name: aviato-profile
+  type: git
+  source:
+    uri: {{git-uri}}
+    branch: master
+    private_key: {{github-private-key}}
+
+- name: version
+  type: semver
+  source:
+    driver: git
+    initial_version: 1.0.0-rc.0
+    uri: {{git-uri-semver}}
+    branch: version
+    file: number
+    private_key: {{github-private-key}}
