@@ -13,6 +13,7 @@ params:
 
 inputs:
   - name: aviato-profile
+  - name: version
 
 run:
-  path: aviato-profile/ci/tasks/build-snapshot.sh
+  path: aviato-profile/ci/tasks/build.sh

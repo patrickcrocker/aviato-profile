@@ -22,7 +22,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<spring-restdocs.version>1.1.0.RC1</spring-restdocs.version>
+		<spring-restdocs.version>1.1.0.RELEASE</spring-restdocs.version>
 		<versionNumber>${project.version}</versionNumber>
 		<finalName>${project.artifactId}-${versionNumber}</finalName>
 	</properties>
@@ -132,6 +132,7 @@
 		</snapshotRepository>
 	</distributionManagement>
 
+<!--
 	<repositories>
 		<repository>
 			<id>spring-milestones</id>
@@ -139,14 +140,6 @@
 			<url>https://repo.spring.io/milestone</url>
 			<snapshots>
 				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>spring-snapshots</id>
-			<name>Spring snapshots</name>
-			<url>https://repo.spring.io/libs-snapshot</url>
-			<snapshots>
-				<enabled>true</enabled>
 			</snapshots>
 		</repository>
 	</repositories>
@@ -159,14 +152,7 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</pluginRepository>
-		<pluginRepository>
-			<id>spring-snapshots</id>
-			<name>Spring Snapshots</name>
-			<url>https://repo.spring.io/pulgins-snapshot</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
 	</pluginRepositories>
+-->
 
 </project>
