@@ -5,5 +5,5 @@ set -e
 version=`cat version/number`
 
 pushd aviato-profile
-  ./mvnw clean deploy -DversionNumber=$version
+  ./mvnw clean package -DversionNumber=$version
 popd
