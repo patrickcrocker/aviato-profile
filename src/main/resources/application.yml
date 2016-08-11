@@ -2,3 +2,5 @@ spring:
   jackson:
     serialization:
       indent-output: true
+  jpa:
+    generate-ddl: true
