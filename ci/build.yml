@@ -15,5 +15,8 @@ inputs:
   - name: aviato-profile
   - name: version
 
+outputs:
+  - name: build-output
+
 run:
   path: aviato-profile/ci/build.sh

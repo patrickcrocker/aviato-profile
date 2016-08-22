@@ -1,5 +1,5 @@
 ---
-mvn-params: &mvn-params
+maven-params: &maven-params
   MAVEN_OPTS: {{maven-opts}}
   MAVEN_CONFIG: {{maven-config}}
 
@@ -14,7 +14,14 @@ jobs:
   - task: build
     file: aviato-profile/ci/build.yml
     params:
-      <<: *mvn-params
+      <<: *maven-params
+  - put: maven-milestones
+    params:
+      file: build-output/aviato-profile-*.jar
+      groupId: com.aviato
+      artifactId: aviato-profile
+      version_file: version/number
+      packaging: jar
   - put: version
     params: { file: version/number }
 
@@ -35,3 +42,31 @@ resources:
     branch: version
     file: number
     private_key: {{github-private-key}}
+
+- name: maven-releases
+  type: maven-resource
+  source:
+    url: {{maven-release-repository-url}}
+    username: {{maven-repository-username}}
+    password: {{maven-repository-password}}
+
+- name: maven-milestones
+  type: maven-resource
+  source:
+    url: {{maven-milestone-repository-url}}
+    username: {{maven-repository-username}}
+    password: {{maven-repository-password}}
+
+- name: maven-snapshots
+  type: maven-resource
+  source:
+    url: {{maven-snapshot-repository-url}}
+    username: {{maven-repository-username}}
+    password: {{maven-repository-password}}
+
+resource_types:
+- name: maven-resource
+  type: docker-image
+  source:
+    repository: patrickcrocker/maven-resource
+    tag: latest
