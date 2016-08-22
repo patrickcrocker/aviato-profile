@@ -24,6 +24,10 @@ jobs:
       packaging: jar
   - put: version
     params: { file: version/number }
+  - put: tracker
+    params:
+      repos:
+        - aviato-profile
 
 resources:
 - name: aviato-profile
@@ -63,6 +67,13 @@ resources:
     url: {{maven-snapshot-repository-url}}
     username: {{maven-repository-username}}
     password: {{maven-repository-password}}
+
+- name: tracker
+  type: tracker
+  source:
+    token: {{tracker-api-token}}
+    project_id: {{tracker-project-id}}
+    tracker_url: {{tracker-url}}
 
 resource_types:
 - name: maven-resource
