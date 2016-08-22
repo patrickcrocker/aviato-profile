@@ -47,26 +47,10 @@ resources:
     file: number
     private_key: {{github-private-key}}
 
-- name: maven-releases
-  type: maven-resource
-  source:
-    url: {{maven-release-repository-url}}
-    username: {{maven-repository-username}}
-    password: {{maven-repository-password}}
-    repository_cert: {{maven-repository-cert}}
-
 - name: maven-milestones
   type: maven-resource
   source:
     url: {{maven-milestone-repository-url}}
-    username: {{maven-repository-username}}
-    password: {{maven-repository-password}}
-    repository_cert: {{maven-repository-cert}}
-
-- name: maven-snapshots
-  type: maven-resource
-  source:
-    url: {{maven-snapshot-repository-url}}
     username: {{maven-repository-username}}
     password: {{maven-repository-password}}
     repository_cert: {{maven-repository-cert}}
