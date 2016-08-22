@@ -8,4 +8,4 @@ pushd aviato-profile
   ./mvnw clean package -DversionNumber=$version
 popd
 
-cp aviato-profile/build/libs/aviato-profile-$VERSION.jar build-output/.
+cp aviato-profile/target/aviato-profile-$version.jar build-output/.
