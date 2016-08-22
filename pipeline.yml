@@ -53,6 +53,7 @@ resources:
     url: {{maven-release-repository-url}}
     username: {{maven-repository-username}}
     password: {{maven-repository-password}}
+    repository_cert: {{maven-repository-cert}}
 
 - name: maven-milestones
   type: maven-resource
@@ -60,6 +61,7 @@ resources:
     url: {{maven-milestone-repository-url}}
     username: {{maven-repository-username}}
     password: {{maven-repository-password}}
+    repository_cert: {{maven-repository-cert}}
 
 - name: maven-snapshots
   type: maven-resource
@@ -67,6 +69,7 @@ resources:
     url: {{maven-snapshot-repository-url}}
     username: {{maven-repository-username}}
     password: {{maven-repository-password}}
+    repository_cert: {{maven-repository-cert}}
 
 - name: tracker
   type: tracker
