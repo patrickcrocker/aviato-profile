@@ -5,6 +5,6 @@ applications:
   instances: 1
   timeout: 180
   host: aviato-profile
-  path: target/aviato-profile-0.0.1-SNAPSHOT.jar
+  path: target/aviato-profile-1.0.0-rc.0.jar
   env:
     JAVA_OPTS: -Djava.security.egd=file:///dev/urandom
