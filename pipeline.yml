@@ -2,6 +2,9 @@
 maven-params: &maven-params
   MAVEN_OPTS: {{maven-opts}}
   MAVEN_CONFIG: {{maven-config}}
+  MAVEN_REPO_MIRROR: {{maven-repository-mirror}}
+  MAVEN_REPO_USERNAME: {{maven-repository-username}}
+  MAVEN_REPO_PASSWORD: {{maven-repository-password}}
 
 jobs:
 - name: build
@@ -15,7 +18,7 @@ jobs:
     file: aviato-profile/ci/build.yml
     params:
       <<: *maven-params
-  - put: maven-milestones
+  - put: maven-milestone
     params:
       file: build-output/aviato-profile-*.jar
       groupId: com.aviato
@@ -28,6 +31,28 @@ jobs:
     params:
       repos:
         - aviato-profile
+
+- name: test
+  public: true
+  plan:
+  - get: maven-milestone
+    trigger: true
+    passed: [ build ]
+  - get: aviato-profile
+    passed: [ build ]
+  - get: version
+    passed: [ build ]
+  - task: prepare-integration
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: java
+          tag: '8'
+      run:
+        path: echo
+        args: ["Hello, world!"]
 
 resources:
 - name: aviato-profile
@@ -47,13 +72,15 @@ resources:
     file: number
     private_key: {{github-private-key}}
 
-- name: maven-milestones
+- name: maven-milestone
   type: maven-resource
   source:
     url: {{maven-milestone-repository-url}}
     username: {{maven-repository-username}}
     password: {{maven-repository-password}}
     repository_cert: {{maven-repository-cert}}
+    # groupId:artifactId:type[:classifier]
+    artifact: com.aviato:aviato-profile:jar
 
 - name: tracker
   type: tracker

@@ -10,6 +10,9 @@ image_resource:
 params:
   MAVEN_OPTS:
   MAVEN_CONFIG:
+  MAVEN_REPO_MIRROR:
+  MAVEN_REPO_USERNAME:
+  MAVEN_REPO_PASSWORD:
 
 inputs:
   - name: aviato-profile
