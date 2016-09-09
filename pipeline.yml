@@ -21,10 +21,7 @@ jobs:
   - put: maven-milestone
     params:
       file: build-output/aviato-profile-*.jar
-      groupId: com.aviato
-      artifactId: aviato-profile
       version_file: version/number
-      packaging: jar
   - put: version
     params: { file: version/number }
   - put: tracker
@@ -51,8 +48,8 @@ jobs:
           repository: java
           tag: '8'
       run:
-        path: echo
-        args: ["Hello, world!"]
+        path: ls
+        args: ["-al", "maven-milestone"]
 
 resources:
 - name: aviato-profile
@@ -76,11 +73,10 @@ resources:
   type: maven-resource
   source:
     url: {{maven-milestone-repository-url}}
+    artifact: com.aviato:aviato-profile:jar
     username: {{maven-repository-username}}
     password: {{maven-repository-password}}
     repository_cert: {{maven-repository-cert}}
-    # groupId:artifactId:type[:classifier]
-    artifact: com.aviato:aviato-profile:jar
 
 - name: tracker
   type: tracker
