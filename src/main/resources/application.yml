@@ -4,3 +4,12 @@ spring:
       indent-output: true
   jpa:
     generate-ddl: true
+management:
+  info:
+    git:
+      mode: full
+info:
+  app:
+    version:
+      java: @java.version@
+      spring: @spring.version@
