@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/ash
 
 set -e
 
@@ -9,8 +9,8 @@ args="-DversionNumber=$version"
 [ -n "$MAVEN_REPO_USERNAME" ] && args="$args -Drepository.username=$MAVEN_REPO_USERNAME";
 [ -n "$MAVEN_REPO_PASSWORD" ] && args="$args -Drepository.password=$MAVEN_REPO_PASSWORD";
 
-pushd aviato-profile
-  ./mvnw clean package $args
-popd
+cd aviato-profile
+./mvnw clean package $args
+cd ..
 
 cp aviato-profile/target/aviato-profile-$version.jar build-output/.
