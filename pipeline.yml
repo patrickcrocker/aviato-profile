@@ -48,6 +48,8 @@ jobs:
         source:
           repository: java
           tag: '8'
+      inputs:
+      - name: maven-milestone
       run:
         path: ls
         args: ["-al", "maven-milestone"]
