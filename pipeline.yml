@@ -10,10 +10,11 @@ jobs:
 - name: build
   public: true
   plan:
-  - get: aviato-profile
-    trigger: true
-  - get: version
-    params: { pre: rc }
+  - aggregate:
+    - get: aviato-profile
+      trigger: true
+    - get: version
+      params: { pre: rc }
   - task: build
     file: aviato-profile/ci/build.yml
     params:
@@ -23,7 +24,8 @@ jobs:
       file: build-output/aviato-profile-*.jar
       version_file: version/number
   - put: version
-    params: { file: version/number }
+    params:
+      file: version/number
   - put: tracker
     params:
       repos:
@@ -31,14 +33,13 @@ jobs:
 
 - name: test
   public: true
+  serial: true
   plan:
-  - get: maven-milestone
-    trigger: true
-    passed: [ build ]
-  - get: aviato-profile
-    passed: [ build ]
-  - get: version
-    passed: [ build ]
+  - aggregate:
+    - get: maven-milestone
+      passed: [ build ]
+      trigger: true
+    - get: aviato-profile
   - task: prepare-integration
     config:
       platform: linux
