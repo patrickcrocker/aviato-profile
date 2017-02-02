@@ -1,9 +1,0 @@
----
-git-uri: git@github.com:yourUsername/aviato-profile.git
-git-uri-semver: git@github.com:yourUsername/aviato-profile.git
-maven-opts: # -Xms256m -Xmx512m
-maven-config: "-s ci/local/settings.xml"
-github-private-key: |
-  -----BEGIN RSA PRIVATE KEY-----
-  ...
-  -----END RSA PRIVATE KEY-----

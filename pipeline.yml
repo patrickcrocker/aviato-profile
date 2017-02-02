@@ -2,9 +2,9 @@
 maven-params: &maven-params
   MAVEN_OPTS: {{maven-opts}}
   MAVEN_CONFIG: {{maven-config}}
-  MAVEN_REPO_MIRROR: {{maven-repository-mirror}}
-  MAVEN_REPO_USERNAME: {{maven-repository-username}}
-  MAVEN_REPO_PASSWORD: {{maven-repository-password}}
+  MAVEN_REPO_MIRROR: {{maven-mirror-url}}
+  MAVEN_REPO_USERNAME: {{maven-username}}
+  MAVEN_REPO_PASSWORD: {{maven-password}}
 
 jobs:
 - name: build
@@ -72,11 +72,10 @@ resources:
 - name: maven-milestone
   type: maven-resource
   source:
-    url: {{maven-milestone-repository-url}}
+    url: {{maven-milestone-url}}
     artifact: com.aviato:aviato-profile:jar
-    username: {{maven-repository-username}}
-    password: {{maven-repository-password}}
-    repository_cert: {{maven-repository-cert}}
+    username: {{maven-username}}
+    password: {{maven-password}}
 
 - name: tracker
   type: tracker
