@@ -82,4 +82,4 @@ resource_types:
   type: docker-image
   source:
     repository: patrickcrocker/maven-resource
-    tag: 1.0.1
+    tag: 1.0.2-rc.2
