@@ -70,7 +70,7 @@ resources:
     artifact: com.aviato:aviato-profile:jar
     username: {{maven-username}}
     password: {{maven-password}}
-    repository_cert: {{maven-repository-cert}}
+    skip_cert_check: true
 
 - name: tracker
   type: tracker
@@ -84,4 +84,4 @@ resource_types:
   type: docker-image
   source:
     repository: patrickcrocker/maven-resource
-    tag: 1.0.3-rc.3
+    tag: 1.0.3
