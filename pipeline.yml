@@ -9,6 +9,7 @@ maven-params: &maven-params
 jobs:
 - name: build
   public: true
+  serial_groups: [version]
   plan:
   - aggregate:
     - get: aviato-profile
@@ -34,7 +35,7 @@ jobs:
 
 - name: test
   public: true
-  serial: true
+  serial_groups: [version]
   plan:
   - aggregate:
     - get: maven-milestone
