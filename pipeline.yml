@@ -34,7 +34,7 @@ jobs:
   - put: maven-milestone
     params:
       file: build-output/aviato-profile-*.jar
-      pom_file: aviato-profile/pom.xml
+      pom_file: project/pom.xml
       version_file: version/number
   - put: version
     params:
