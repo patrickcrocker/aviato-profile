@@ -54,6 +54,14 @@ jobs:
       passed: [ build ]
       trigger: true
     - get: concourse-commons
+  - put: itest-org
+    resource: cf-cli-itest
+    params:
+      command: create-org {{cf-org}}
+  - put: itest-space
+    resource: cf-cli-itest
+    params:
+      COMMAND: create-space {{cf-space}}
   - task: generate-manifest
     file: concourse-commons/tasks/generate-manifest.yml
     params:
@@ -61,7 +69,7 @@ jobs:
       CF_APP_NAME: {{cf-app-ui-name}}
       CF_APP_HOST: {{cf-app-ui-host}}
       ARTIFACT_GLOB: aviato-profile-*.jar
-  - put: cf-itest
+  - put: itest-app
     params:
       manifest: generate-manifest-output/manifest.yml
       current_app_name: {{cf-app-ui-name}}
@@ -106,7 +114,7 @@ resources:
     project_id: {{tracker-project-id}}
     tracker_url: {{tracker-url}}
 
-- name: cf-itest
+- name: itest-app
   type: cf
   source:
     api: {{cf-api-url}}
@@ -116,9 +124,23 @@ resources:
     organization: {{cf-org}}
     space: {{cf-space}}
 
+- name: cf-cli-itest
+  type: cf
+  source:
+    api: {{cf-api-url}}
+    skip_cert_check: true
+    username: {{cf-username}}
+    password: {{cf-password}}
+
 resource_types:
 - name: maven-resource
   type: docker-image
   source:
     repository: patrickcrocker/maven-resource
     tag: 1.1.0
+
+- name: cf-cli-resource
+  type: docker-image
+  source:
+    repository: patrickcrocker/cf-cli-resource
+    tag: 1.0.0-rc.1
