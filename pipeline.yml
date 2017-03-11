@@ -20,14 +20,17 @@ jobs:
   serial_groups: [version]
   plan:
   - aggregate:
-    - get: aviato-profile
+    - get: project
+      resource: aviato-profile
       trigger: true
     - get: version
       params: { pre: rc }
+    - get: concourse-commons
   - task: build
-    file: aviato-profile/ci/build.yml
+    file: concourse-commons/tasks/build-maven.yml
     params:
       <<: *maven-params
+      ARTIFACT_GLOB: aviato-profile-*.jar
   - put: maven-milestone
     params:
       file: build-output/aviato-profile-*.jar
@@ -46,18 +49,18 @@ jobs:
   serial_groups: [version]
   plan:
   - aggregate:
-    - get: concourse-commons
-    - get: maven-milestone
+    - get: release
+      resource: maven-milestone
       passed: [ build ]
       trigger: true
-    - get: aviato-profile
+    - get: concourse-commons
   - task: generate-manifest
     file: concourse-commons/tasks/generate-manifest.yml
     params:
       <<: *cf-params
       CF_APP_NAME: {{cf-app-ui-name}}
       CF_APP_HOST: {{cf-app-ui-host}}
-      CF_ARTIFACT_ID: aviato-ui
+      ARTIFACT_GLOB: aviato-profile-*.jar
   - put: cf-itest
     params:
       manifest: generate-manifest-output/manifest.yml
