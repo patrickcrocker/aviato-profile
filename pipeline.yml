@@ -54,27 +54,28 @@ jobs:
       passed: [ build ]
       trigger: true
     - get: concourse-commons
-  - put: itest-org
-    resource: cf-cli-itest
-    params:
-      command: create-org {{cf-org}}
-  - put: itest-space
-    resource: cf-cli-itest
-    params:
-      create_space:
-        org: {{cf-org}}
-        space: {{cf-space}}
   - task: generate-manifest
     file: concourse-commons/tasks/generate-manifest.yml
     params:
       <<: *cf-params
-      CF_APP_NAME: {{cf-app-ui-name}}
-      CF_APP_HOST: {{cf-app-ui-host}}
+      CF_APP_NAME: {{cf-app-name}}
+      CF_APP_HOST: {{cf-app-host}}
       ARTIFACT_GLOB: aviato-profile-*.jar
-  - put: itest-app
+  - put: cf-push
+    resource: cf-itest
     params:
-      manifest: generate-manifest-output/manifest.yml
-      current_app_name: {{cf-app-ui-name}}
+      create_space:
+        org: {{cf-org}}
+        space: {{cf-space}}
+      create_service:
+        org: {{cf-org}}
+        space: {{cf-space}}
+        service: "cleardb"
+        plan: "spark"
+        service_instance: "aviato-profile-db"
+      push:
+        manifest: generate-manifest-output/manifest.yml
+        current_app_name: {{cf-app-name}}
 
 resources:
 - name: concourse-commons
@@ -116,18 +117,8 @@ resources:
     project_id: {{tracker-project-id}}
     tracker_url: {{tracker-url}}
 
-- name: itest-app
-  type: cf
-  source:
-    api: {{cf-api-url}}
-    skip_cert_check: true
-    username: {{cf-username}}
-    password: {{cf-password}}
-    organization: {{cf-org}}
-    space: {{cf-space}}
-
-- name: cf-cli-itest
-  type: cf
+- name: cf-itest
+  type: cf-cli-resource
   source:
     api: {{cf-api-url}}
     skip_cert_check: true
@@ -145,4 +136,4 @@ resource_types:
   type: docker-image
   source:
     repository: patrickcrocker/cf-cli-resource
-    tag: 1.0.0-rc.2
+    tag: 1.0.0-rc.3
