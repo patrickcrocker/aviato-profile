@@ -61,19 +61,27 @@ jobs:
       CF_APP_NAME: {{cf-app-name}}
       CF_APP_HOST: {{cf-app-host}}
       ARTIFACT_GLOB: aviato-profile-*.jar
-  - put: cf-push
+  - put: cf-create-space
     resource: cf-itest
     params:
       create_space:
         org: {{cf-org}}
         space: {{cf-space}}
+  - put: cf-create-db
+    resource: cf-itest
+    params:
       create_service:
         org: {{cf-org}}
         space: {{cf-space}}
         service: "cleardb"
         plan: "spark"
         service_instance: "aviato-profile-db"
+  - put: cf-push
+    resource: cf-itest
+    params:
       push:
+        org: {{cf-org}}
+        space: {{cf-space}}
         manifest: generate-manifest-output/manifest.yml
         current_app_name: {{cf-app-name}}
 
@@ -136,4 +144,4 @@ resource_types:
   type: docker-image
   source:
     repository: patrickcrocker/cf-cli-resource
-    tag: 1.0.0-rc.4
+    tag: 1.0.0-rc.5
