@@ -83,7 +83,6 @@ jobs:
         org: {{cf-org}}
         space: {{cf-space}}
         manifest: generate-manifest-output/manifest.yml
-        current_app_name: {{cf-app-name}}
 
 resources:
 - name: concourse-commons
@@ -144,4 +143,4 @@ resource_types:
   type: docker-image
   source:
     repository: patrickcrocker/cf-cli-resource
-    tag: 1.0.0-rc.5
+    tag: 1.0.0-rc.10
