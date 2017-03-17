@@ -5,7 +5,7 @@
 set -e
 
 # copy the artifact to the task-output folder
-cp release/$ARTIFACT_GLOB generate-manifest-output/.
+cp artifact/$ARTIFACT_GLOB generate-manifest-output/.
 
 pushd generate-manifest-output
 

@@ -20,7 +20,7 @@ params:
 
 inputs:
 - name: aviato-profile
-- name: release
+- name: artifact
 
 outputs:
 - name: generate-manifest-output
