@@ -9,7 +9,6 @@ image_resource:
 
 inputs:
   - name: aviato-profile
-  - name: maven-milestone
 
 run:
   path: aviato-profile/ci/test.sh
