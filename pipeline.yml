@@ -1,18 +1,4 @@
 ---
-maven-params: &maven-params
-  MAVEN_OPTS: {{maven-opts}}
-  MAVEN_CONFIG: {{maven-config}}
-  MAVEN_REPO_MIRROR: {{maven-mirror-url}}
-  MAVEN_REPO_USERNAME: {{maven-username}}
-  MAVEN_REPO_PASSWORD: {{maven-password}}
-
-cf-params: &cf-params
-  CF_API_URL: {{cf-api-url}}
-  CF_SKIP_SSL: {{cf-skip-ssl}}
-  CF_USERNAME: {{cf-username}}
-  CF_PASSWORD: {{cf-password}}
-  CF_ORG: {{cf-org}}
-  CF_SPACE: {{cf-space}}
 
 jobs:
 - name: build
@@ -20,21 +6,23 @@ jobs:
   serial_groups: [version]
   plan:
   - aggregate:
-    - get: project
-      resource: aviato-profile
+    - get: aviato-profile
       trigger: true
     - get: version
       params: { pre: rc }
-    - get: concourse-commons
   - task: build
-    file: concourse-commons/tasks/build-maven.yml
+    file: aviato-profile/ci/build.yml
     params:
-      <<: *maven-params
+      MAVEN_OPTS: {{maven-opts}}
+      MAVEN_CONFIG: {{maven-config}}
+      MAVEN_REPO_MIRROR: {{maven-mirror-url}}
+      MAVEN_REPO_USERNAME: {{maven-username}}
+      MAVEN_REPO_PASSWORD: {{maven-password}}
       ARTIFACT_GLOB: aviato-profile-*.jar
   - put: maven-milestone
     params:
       file: build-output/aviato-profile-*.jar
-      pom_file: project/pom.xml
+      pom_file: aviato-profile/pom.xml
       version_file: version/number
   - put: version
     params:
@@ -49,18 +37,26 @@ jobs:
   serial_groups: [version]
   plan:
   - aggregate:
-    - get: release
-      resource: maven-milestone
+    - get: maven-milestone
       passed: [ build ]
       trigger: true
-    - get: concourse-commons
   - task: generate-manifest
-    file: concourse-commons/tasks/generate-manifest.yml
+    file: aviato-profile/ci/generate-manifest.yml
     params:
-      <<: *cf-params
+      CF_API_URL: {{cf-api-url}}
+      CF_SKIP_SSL: {{cf-skip-ssl}}
+      CF_USERNAME: {{cf-username}}
+      CF_PASSWORD: {{cf-password}}
+      CF_ORG: {{cf-org}}
+      CF_SPACE: {{cf-space}}
       CF_APP_NAME: {{cf-app-name}}
       CF_APP_HOST: {{cf-app-host}}
       ARTIFACT_GLOB: aviato-profile-*.jar
+  - put: cf-create-org
+    resource: cf-itest
+    params:
+      create_space:
+        org: {{cf-org}}
   - put: cf-create-space
     resource: cf-itest
     params:
@@ -73,8 +69,8 @@ jobs:
       create_service:
         org: {{cf-org}}
         space: {{cf-space}}
-        service: "cleardb"
-        plan: "spark"
+        service: "p-mysql"
+        plan: "100mb"
         service_instance: "aviato-profile-db"
   - put: cf-push
     resource: cf-itest
@@ -85,12 +81,6 @@ jobs:
         manifest: generate-manifest-output/manifest.yml
 
 resources:
-- name: concourse-commons
-  type: git
-  source:
-    uri: {{concourse-commons-git-uri}}
-    branch: {{concourse-commons-git-branch}}
-
 - name: aviato-profile
   type: git
   source:
@@ -143,4 +133,4 @@ resource_types:
   type: docker-image
   source:
     repository: patrickcrocker/cf-cli-resource
-    tag: 1.0.0-rc.10
+    tag: 1.0.0
