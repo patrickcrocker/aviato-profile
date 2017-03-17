@@ -19,6 +19,7 @@ groups:
   jobs:
   - shipit
   - patch
+  - prod
   - major
   - minor
 
@@ -314,7 +315,7 @@ resources:
     skip_cert_check: {{maven-release-skip-ssl}}
 
 - name: tracker
-  type: tracker
+  type: tracker-resource
   source:
     token: {{tracker-api-token}}
     project_id: {{tracker-project-id}}
