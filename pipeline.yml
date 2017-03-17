@@ -7,6 +7,7 @@ groups:
   - uat
   - shipit
   - patch
+  - prod
   - major
   - minor
 - name: develop
@@ -189,6 +190,75 @@ jobs:
   - put: version
     params: {file: version/number}
 
+- name: patch
+  public: true
+  serial_groups: [version]
+  plan:
+  - get: version
+    passed: [shipit]
+    params: {bump: patch, pre: rc}
+    trigger: true
+  - put: version
+    params: {file: version/number}
+
+- name: prod
+  public: true
+  serial_groups: [version]
+  plan:
+  - aggregate:
+    - get: aviato-profile
+      passed: [shipit]
+    - get: artifact
+      resource: maven-release
+      passed: [shipit]
+    - get: version
+      passed: [shipit]
+  - put: cf-create-org
+    resource: cf-prod
+    params:
+      create_org:
+        org: {{cf-prod-org}}
+  - put: cf-create-space
+    resource: cf-prod
+    params:
+      create_space:
+        org: {{cf-prod-org}}
+        space: {{cf-prod-space}}
+  - put: cf-create-db
+    resource: cf-prod
+    params:
+      create_service:
+        org: {{cf-prod-org}}
+        space: {{cf-prod-space}}
+        service: {{cf-prod-app-db-service}}
+        plan: {{cf-prod-app-db-plan}}
+        service_instance: {{cf-prod-app-db-si}}
+  - task: generate-manifest
+    file: aviato-profile/ci/generate-manifest.yml
+    params:
+      CF_API_URL: {{cf-prod-api-url}}
+      CF_SKIP_SSL: {{cf-prod-skip-ssl}}
+      CF_USERNAME: {{cf-prod-username}}
+      CF_PASSWORD: {{cf-prod-password}}
+      CF_ORG: {{cf-prod-org}}
+      CF_SPACE: {{cf-prod-space}}
+      CF_APP_NAME: {{cf-prod-app-name}}
+      CF_APP_HOST: {{cf-prod-app-host}}
+      CF_APP_SERVICES: {{cf-prod-app-db-si}}
+      ARTIFACT_GLOB: aviato-profile-*.jar
+  - put: cf-push
+    resource: cf-prod
+    params:
+      push:
+        org: {{cf-prod-org}}
+        space: {{cf-prod-space}}
+        manifest: generate-manifest-output/manifest.yml
+  # Run prod tests??
+  # - task: integration-tests
+  #   file: aviato-profile/ci/test.yml
+  #   params:
+  #     APP_URL: {{cf-prod-app-url}}
+
 - name: major
   public: true
   serial_groups: [version]
@@ -207,23 +277,12 @@ jobs:
   - put: version
     params: {file: version/number}
 
-- name: patch
-  public: true
-  serial_groups: [version]
-  plan:
-  - get: version
-    passed: [shipit]
-    params: {bump: patch, pre: rc}
-    trigger: true
-  - put: version
-    params: {file: version/number}
-
 resources:
 - name: aviato-profile
   type: git
   source:
-    uri: {{git-uri}}
-    branch: master
+    uri: {{git-project-uri}}
+    branch: {{git-project-branch}}
     private_key: {{github-private-key}}
 
 - name: version
@@ -231,8 +290,8 @@ resources:
   source:
     driver: git
     initial_version: 1.0.0-rc.0
-    uri: {{git-uri-semver}}
-    branch: version
+    uri: {{git-semver-uri}}
+    branch: {{git-semver-branch}}
     file: number
     private_key: {{github-private-key}}
 
@@ -277,13 +336,13 @@ resources:
     username: {{cf-uat-username}}
     password: {{cf-uat-password}}
 
-# - name: cf-prod
-#   type: cf-cli-resource
-#   source:
-#     api: {{cf-prod-api-url}}
-#     skip_cert_check: {{cf-prod-skip-ssl}}
-#     username: {{cf-prod-username}}
-#     password: {{cf-prod-password}}
+- name: cf-prod
+  type: cf-cli-resource
+  source:
+    api: {{cf-prod-api-url}}
+    skip_cert_check: {{cf-prod-skip-ssl}}
+    username: {{cf-prod-username}}
+    password: {{cf-prod-password}}
 
 resource_types:
 - name: maven-resource
