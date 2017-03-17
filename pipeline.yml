@@ -361,4 +361,3 @@ resource_types:
   type: docker-image
   source:
     repository: concourse/tracker-resource
-    tag: latest
