@@ -69,8 +69,8 @@ jobs:
       create_service:
         org: {{cf-org}}
         space: {{cf-space}}
-        service: "p-mysql"
-        plan: "100mb"
+        service: {{cf-app-db-service}}
+        plan: {{cf-app-db-plan}}
         service_instance: "aviato-profile-db"
   - put: cf-push
     resource: cf-itest
