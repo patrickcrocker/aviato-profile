@@ -1,4 +1,25 @@
 ---
+groups:
+- name: all
+  jobs:
+  - build
+  - test
+  - uat
+  - shipit
+  - patch
+  - major
+  - minor
+- name: develop
+  jobs:
+  - build
+  - test
+  - uat
+- name: publish
+  jobs:
+  - shipit
+  - patch
+  - major
+  - minor
 
 jobs:
 - name: build
@@ -155,8 +176,7 @@ jobs:
   - aggregate:
     - get: aviato-profile
       passed: [uat]
-    - get: artifact
-      resource: maven-milestone
+    - get: maven-milestone
       passed: [uat]
     - get: version
       passed: [uat]
@@ -256,6 +276,14 @@ resources:
     skip_cert_check: {{cf-uat-skip-ssl}}
     username: {{cf-uat-username}}
     password: {{cf-uat-password}}
+
+# - name: cf-prod
+#   type: cf-cli-resource
+#   source:
+#     api: {{cf-prod-api-url}}
+#     skip_cert_check: {{cf-prod-skip-ssl}}
+#     username: {{cf-prod-username}}
+#     password: {{cf-prod-password}}
 
 resource_types:
 - name: maven-resource
