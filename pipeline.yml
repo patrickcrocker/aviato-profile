@@ -9,15 +9,15 @@ jobs:
     - get: aviato-profile
       trigger: true
     - get: version
-      params: { pre: rc }
+      params: {pre: rc}
   - task: build
     file: aviato-profile/ci/build.yml
     params:
       MAVEN_OPTS: {{maven-opts}}
       MAVEN_CONFIG: {{maven-config}}
       MAVEN_REPO_MIRROR: {{maven-mirror-url}}
-      MAVEN_REPO_USERNAME: {{maven-username}}
-      MAVEN_REPO_PASSWORD: {{maven-password}}
+      MAVEN_REPO_USERNAME: {{maven-mirror-username}}
+      MAVEN_REPO_PASSWORD: {{maven-mirror-password}}
       ARTIFACT_GLOB: aviato-profile-*.jar
   - put: maven-milestone
     params:
@@ -38,15 +38,17 @@ jobs:
   plan:
   - aggregate:
     - get: aviato-profile
-      passed: [ build ]
+      passed: [build]
     - get: artifact
       resource: maven-milestone
-      passed: [ build ]
+      passed: [build]
       trigger: true
+    - get: version
+      passed: [build]
   - put: cf-create-org
     resource: cf-test
     params:
-      create_space:
+      create_org:
         org: {{cf-test-org}}
   - put: cf-create-space
     resource: cf-test
@@ -83,6 +85,118 @@ jobs:
         org: {{cf-test-org}}
         space: {{cf-test-space}}
         manifest: generate-manifest-output/manifest.yml
+  - task: integration-tests
+    file: aviato-profile/ci/test.yml
+    params:
+      APP_URL: {{cf-test-app-url}}
+
+- name: uat
+  public: true
+  serial_groups: [version]
+  plan:
+  - aggregate:
+    - get: aviato-profile
+      passed: [test]
+    - get: artifact
+      resource: maven-milestone
+      passed: [test]
+      trigger: true
+    - get: version
+      passed: [test]
+  - put: cf-create-org
+    resource: cf-uat
+    params:
+      create_org:
+        org: {{cf-uat-org}}
+  - put: cf-create-space
+    resource: cf-uat
+    params:
+      create_space:
+        org: {{cf-uat-org}}
+        space: {{cf-uat-space}}
+  - put: cf-create-db
+    resource: cf-uat
+    params:
+      create_service:
+        org: {{cf-uat-org}}
+        space: {{cf-uat-space}}
+        service: {{cf-uat-app-db-service}}
+        plan: {{cf-uat-app-db-plan}}
+        service_instance: {{cf-uat-app-db-si}}
+  - task: generate-manifest
+    file: aviato-profile/ci/generate-manifest.yml
+    params:
+      CF_API_URL: {{cf-uat-api-url}}
+      CF_SKIP_SSL: {{cf-uat-skip-ssl}}
+      CF_USERNAME: {{cf-uat-username}}
+      CF_PASSWORD: {{cf-uat-password}}
+      CF_ORG: {{cf-uat-org}}
+      CF_SPACE: {{cf-uat-space}}
+      CF_APP_NAME: {{cf-uat-app-name}}
+      CF_APP_HOST: {{cf-uat-app-host}}
+      CF_APP_SERVICES: {{cf-uat-app-db-si}}
+      ARTIFACT_GLOB: aviato-profile-*.jar
+  - put: cf-push
+    resource: cf-uat
+    params:
+      push:
+        org: {{cf-uat-org}}
+        space: {{cf-uat-space}}
+        manifest: generate-manifest-output/manifest.yml
+  - task: integration-tests
+    file: aviato-profile/ci/test.yml
+    params:
+      APP_URL: {{cf-uat-app-url}}
+
+- name: shipit
+  public: true
+  serial_groups: [version]
+  plan:
+  - aggregate:
+    - get: aviato-profile
+      passed: [uat]
+    - get: artifact
+      resource: maven-milestone
+      passed: [uat]
+    - get: version
+      passed: [uat]
+      params: {bump: final}
+  - put: maven-release
+    params:
+      file: maven-milestone/aviato-profile-*.jar
+      pom_file: aviato-profile/pom.xml
+      version_file: version/number
+  - put: version
+    params: {file: version/number}
+
+- name: major
+  public: true
+  serial_groups: [version]
+  plan:
+  - get: version
+    params: {bump: major, pre: rc}
+  - put: version
+    params: {file: version/number}
+
+- name: minor
+  public: true
+  serial_groups: [version]
+  plan:
+  - get: version
+    params: {bump: minor, pre: rc}
+  - put: version
+    params: {file: version/number}
+
+- name: patch
+  public: true
+  serial_groups: [version]
+  plan:
+  - get: version
+    passed: [shipit]
+    params: {bump: patch, pre: rc}
+    trigger: true
+  - put: version
+    params: {file: version/number}
 
 resources:
 - name: aviato-profile
@@ -107,9 +221,18 @@ resources:
   source:
     url: {{maven-milestone-url}}
     artifact: com.aviato:aviato-profile:jar
-    username: {{maven-username}}
-    password: {{maven-password}}
-    skip_cert_check: true
+    username: {{maven-milestone-username}}
+    password: {{maven-milestone-password}}
+    skip_cert_check: {{maven-milestone-skip-ssl}}
+
+- name: maven-release
+  type: maven-resource
+  source:
+    url: {{maven-release-url}}
+    artifact: com.aviato:aviato-profile:jar
+    username: {{maven-release-username}}
+    password: {{maven-release-password}}
+    skip_cert_check: {{maven-release-skip-ssl}}
 
 - name: tracker
   type: tracker
@@ -125,6 +248,14 @@ resources:
     skip_cert_check: {{cf-test-skip-ssl}}
     username: {{cf-test-username}}
     password: {{cf-test-password}}
+
+- name: cf-uat
+  type: cf-cli-resource
+  source:
+    api: {{cf-uat-api-url}}
+    skip_cert_check: {{cf-uat-skip-ssl}}
+    username: {{cf-uat-username}}
+    password: {{cf-uat-password}}
 
 resource_types:
 - name: maven-resource
