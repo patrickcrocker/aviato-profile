@@ -356,3 +356,9 @@ resource_types:
   source:
     repository: patrickcrocker/cf-cli-resource
     tag: 1.0.0
+
+- name: tracker-resource
+  type: docker-image
+  source:
+    repository: concourse/tracker-resource
+    tag: latest
