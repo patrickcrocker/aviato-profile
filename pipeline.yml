@@ -37,47 +37,49 @@ jobs:
   serial_groups: [version]
   plan:
   - aggregate:
+    - get: aviato-profile
+      passed: [ build ]
     - get: maven-milestone
       passed: [ build ]
       trigger: true
   - task: generate-manifest
     file: aviato-profile/ci/generate-manifest.yml
     params:
-      CF_API_URL: {{cf-api-url}}
-      CF_SKIP_SSL: {{cf-skip-ssl}}
-      CF_USERNAME: {{cf-username}}
-      CF_PASSWORD: {{cf-password}}
-      CF_ORG: {{cf-org}}
-      CF_SPACE: {{cf-space}}
-      CF_APP_NAME: {{cf-app-name}}
-      CF_APP_HOST: {{cf-app-host}}
+      CF_API_URL: {{cf-test-api-url}}
+      CF_SKIP_SSL: {{cf-test-skip-ssl}}
+      CF_USERNAME: {{cf-test-username}}
+      CF_PASSWORD: {{cf-test-password}}
+      CF_ORG: {{cf-test-org}}
+      CF_SPACE: {{cf-test-space}}
+      CF_APP_NAME: {{cf-test-app-name}}
+      CF_APP_HOST: {{cf-test-app-host}}
       ARTIFACT_GLOB: aviato-profile-*.jar
   - put: cf-create-org
-    resource: cf-itest
+    resource: cf-test
     params:
       create_space:
-        org: {{cf-org}}
+        org: {{cf-test-org}}
   - put: cf-create-space
-    resource: cf-itest
+    resource: cf-test
     params:
       create_space:
-        org: {{cf-org}}
-        space: {{cf-space}}
+        org: {{cf-test-org}}
+        space: {{cf-test-space}}
   - put: cf-create-db
-    resource: cf-itest
+    resource: cf-test
     params:
       create_service:
-        org: {{cf-org}}
-        space: {{cf-space}}
-        service: {{cf-app-db-service}}
-        plan: {{cf-app-db-plan}}
-        service_instance: "aviato-profile-db"
+        org: {{cf-test-org}}
+        space: {{cf-test-space}}
+        service: {{cf-test-app-db-service}}
+        plan: {{cf-test-app-db-plan}}
+        service_instance: {{cf-test-app-db-si}}
   - put: cf-push
-    resource: cf-itest
+    resource: cf-test
     params:
       push:
-        org: {{cf-org}}
-        space: {{cf-space}}
+        org: {{cf-test-org}}
+        space: {{cf-test-space}}
         manifest: generate-manifest-output/manifest.yml
 
 resources:
@@ -114,13 +116,13 @@ resources:
     project_id: {{tracker-project-id}}
     tracker_url: {{tracker-url}}
 
-- name: cf-itest
+- name: cf-test
   type: cf-cli-resource
   source:
-    api: {{cf-api-url}}
-    skip_cert_check: true
-    username: {{cf-username}}
-    password: {{cf-password}}
+    api: {{cf-test-api-url}}
+    skip_cert_check: {{cf-test-skip-ssl}}
+    username: {{cf-test-username}}
+    password: {{cf-test-password}}
 
 resource_types:
 - name: maven-resource
