@@ -13,6 +13,7 @@ params:
   MAVEN_REPO_MIRROR:
   MAVEN_REPO_USERNAME:
   MAVEN_REPO_PASSWORD:
+  ARTIFACT_GLOB:
 
 inputs:
   - name: aviato-profile

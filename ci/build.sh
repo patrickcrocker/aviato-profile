@@ -13,4 +13,4 @@ cd aviato-profile
 ./mvnw clean package $args
 cd ..
 
-cp aviato-profile/target/aviato-profile-$version.jar build-output/.
+cp aviato-profile/target/$ARTIFACT_GLOB build-output/.
