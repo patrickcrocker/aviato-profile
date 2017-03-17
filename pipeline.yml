@@ -39,21 +39,10 @@ jobs:
   - aggregate:
     - get: aviato-profile
       passed: [ build ]
-    - get: maven-milestone
+    - get: artifact
+      resource: maven-milestone
       passed: [ build ]
       trigger: true
-  - task: generate-manifest
-    file: aviato-profile/ci/generate-manifest.yml
-    params:
-      CF_API_URL: {{cf-test-api-url}}
-      CF_SKIP_SSL: {{cf-test-skip-ssl}}
-      CF_USERNAME: {{cf-test-username}}
-      CF_PASSWORD: {{cf-test-password}}
-      CF_ORG: {{cf-test-org}}
-      CF_SPACE: {{cf-test-space}}
-      CF_APP_NAME: {{cf-test-app-name}}
-      CF_APP_HOST: {{cf-test-app-host}}
-      ARTIFACT_GLOB: aviato-profile-*.jar
   - put: cf-create-org
     resource: cf-test
     params:
@@ -74,6 +63,19 @@ jobs:
         service: {{cf-test-app-db-service}}
         plan: {{cf-test-app-db-plan}}
         service_instance: {{cf-test-app-db-si}}
+  - task: generate-manifest
+    file: aviato-profile/ci/generate-manifest.yml
+    params:
+      CF_API_URL: {{cf-test-api-url}}
+      CF_SKIP_SSL: {{cf-test-skip-ssl}}
+      CF_USERNAME: {{cf-test-username}}
+      CF_PASSWORD: {{cf-test-password}}
+      CF_ORG: {{cf-test-org}}
+      CF_SPACE: {{cf-test-space}}
+      CF_APP_NAME: {{cf-test-app-name}}
+      CF_APP_HOST: {{cf-test-app-host}}
+      CF_APP_SERVICES: {{cf-test-app-db-si}}
+      ARTIFACT_GLOB: aviato-profile-*.jar
   - put: cf-push
     resource: cf-test
     params:
