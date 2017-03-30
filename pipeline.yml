@@ -350,7 +350,7 @@ resource_types:
   type: docker-image
   source:
     repository: patrickcrocker/maven-resource
-    tag: 1.1.0
+    tag: 1.3.0
 
 - name: cf-cli-resource
   type: docker-image
