@@ -104,10 +104,11 @@ jobs:
   - put: cf-push
     resource: cf-test
     params:
-      push:
+      zero_downtime_push:
         org: {{cf-test-org}}
         space: {{cf-test-space}}
         manifest: generate-manifest-output/manifest.yml
+        current_app_name: {{cf-test-app-name}}
   - task: integration-tests
     file: aviato-profile/ci/test.yml
     params:
@@ -162,10 +163,11 @@ jobs:
   - put: cf-push
     resource: cf-uat
     params:
-      push:
+      zero_downtime_push:
         org: {{cf-uat-org}}
         space: {{cf-uat-space}}
         manifest: generate-manifest-output/manifest.yml
+        current_app_name: {{cf-uat-app-name}}
   - task: integration-tests
     file: aviato-profile/ci/test.yml
     params:
@@ -250,10 +252,11 @@ jobs:
   - put: cf-push
     resource: cf-prod
     params:
-      push:
+      zero_downtime_push:
         org: {{cf-prod-org}}
         space: {{cf-prod-space}}
         manifest: generate-manifest-output/manifest.yml
+        current_app_name: {{cf-prod-app-name}}
   # Run prod tests??
   # - task: integration-tests
   #   file: aviato-profile/ci/test.yml
