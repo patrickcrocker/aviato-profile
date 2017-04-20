@@ -43,6 +43,7 @@ jobs:
     - get: version
       params: {pre: rc}
   - task: build
+    image: spring-initializd
     file: pipeline-tasks/build-maven-semver/task.yml
     params:
       <<: *maven-params
@@ -71,26 +72,19 @@ jobs:
       resource: maven-milestone
       passed: [build]
       trigger: true
-  - put: cf-create-org
+  - put: cf-create-org-and-space
     resource: cf-test
     params:
-      create_org:
-        org: {{cf-test-org}}
-  - put: cf-create-space
-    resource: cf-test
-    params:
-      create_space:
-        org: {{cf-test-org}}
-        space: {{cf-test-space}}
+      commands:
+      - command: create-org
+      - command: create-space
   - put: cf-create-db
     resource: cf-test
     params:
-      create_service:
-        org: {{cf-test-org}}
-        space: {{cf-test-space}}
-        service: {{cf-test-app-db-service}}
-        plan: {{cf-test-app-db-plan}}
-        service_instance: {{cf-test-app-db-si}}
+      command: create-service
+      service: {{cf-test-app-db-service}}
+      plan: {{cf-test-app-db-plan}}
+      service_instance: {{cf-test-app-db-si}}
   - task: generate-manifest
     file: pipeline-tasks/generate-manifest/task.yml
     params:
@@ -101,11 +95,9 @@ jobs:
   - put: cf-push
     resource: cf-test
     params:
-      zero_downtime_push:
-        org: {{cf-test-org}}
-        space: {{cf-test-space}}
-        manifest: task-output/manifest.yml
-        current_app_name: {{cf-test-app-name}}
+      command: zero-downtime-push
+      manifest: task-output/manifest.yml
+      current_app_name: {{cf-test-app-name}}
   - task: integration-tests
     file: pipeline-tasks/run-maven-itests/task.yml
     params:
@@ -127,26 +119,19 @@ jobs:
       resource: maven-milestone
       passed: [test]
       trigger: true
-  - put: cf-create-org
+  - put: cf-create-org-and-space
     resource: cf-uat
     params:
-      create_org:
-        org: {{cf-uat-org}}
-  - put: cf-create-space
-    resource: cf-uat
-    params:
-      create_space:
-        org: {{cf-uat-org}}
-        space: {{cf-uat-space}}
+      commands:
+      - command: create-org
+      - command: create-space
   - put: cf-create-db
     resource: cf-uat
     params:
-      create_service:
-        org: {{cf-uat-org}}
-        space: {{cf-uat-space}}
-        service: {{cf-uat-app-db-service}}
-        plan: {{cf-uat-app-db-plan}}
-        service_instance: {{cf-uat-app-db-si}}
+      command: create-service
+      service: {{cf-uat-app-db-service}}
+      plan: {{cf-uat-app-db-plan}}
+      service_instance: {{cf-uat-app-db-si}}
   - task: generate-manifest
     file: pipeline-tasks/generate-manifest/task.yml
     params:
@@ -157,11 +142,9 @@ jobs:
   - put: cf-push
     resource: cf-uat
     params:
-      zero_downtime_push:
-        org: {{cf-uat-org}}
-        space: {{cf-uat-space}}
-        manifest: task-output/manifest.yml
-        current_app_name: {{cf-uat-app-name}}
+      command: zero-downtime-push
+      manifest: task-output/manifest.yml
+      current_app_name: {{cf-uat-app-name}}
   - task: integration-tests
     file: pipeline-tasks/run-maven-itests/task.yml
     params:
@@ -203,26 +186,19 @@ jobs:
     - get: artifact
       resource: maven-release
       passed: [shipit]
-  - put: cf-create-org
+  - put: cf-create-org-and-space
     resource: cf-prod
     params:
-      create_org:
-        org: {{cf-prod-org}}
-  - put: cf-create-space
-    resource: cf-prod
-    params:
-      create_space:
-        org: {{cf-prod-org}}
-        space: {{cf-prod-space}}
+      commands:
+      - command: create-org
+      - command: create-space
   - put: cf-create-db
     resource: cf-prod
     params:
-      create_service:
-        org: {{cf-prod-org}}
-        space: {{cf-prod-space}}
-        service: {{cf-prod-app-db-service}}
-        plan: {{cf-prod-app-db-plan}}
-        service_instance: {{cf-prod-app-db-si}}
+      command: create-service
+      service: {{cf-prod-app-db-service}}
+      plan: {{cf-prod-app-db-plan}}
+      service_instance: {{cf-prod-app-db-si}}
   - task: generate-manifest
     file: pipeline-tasks/generate-manifest/task.yml
     params:
@@ -233,11 +209,9 @@ jobs:
   - put: cf-push
     resource: cf-prod
     params:
-      zero_downtime_push:
-        org: {{cf-prod-org}}
-        space: {{cf-prod-space}}
-        manifest: task-output/manifest.yml
-        current_app_name: {{cf-prod-app-name}}
+      command: zero-downtime-push
+      manifest: task-output/manifest.yml
+      current_app_name: {{cf-prod-app-name}}
   - task: integration-tests
     file: pipeline-tasks/run-maven-itests/task.yml
     params:
@@ -280,6 +254,12 @@ resources:
     uri: {{pipeline-tasks-git-uri}}
     branch: {{pipeline-tasks-git-branch}}
 
+- name: spring-initializd
+  type: docker-image
+  source:
+    repository: patrickcrocker/spring-initializd
+    tag: spring-boot-1.5.2.RELEASE-1.0.0-rc.5
+
 - name: aviato-profile
   type: git
   source:
@@ -316,7 +296,7 @@ resources:
     skip_cert_check: {{maven-release-skip-ssl}}
 
 - name: tracker
-  type: tracker-resource
+  type: tracker
   source:
     token: {{tracker-api-token}}
     project_id: {{tracker-project-id}}
@@ -329,6 +309,8 @@ resources:
     skip_cert_check: {{cf-test-skip-ssl}}
     username: {{cf-test-username}}
     password: {{cf-test-password}}
+    org: {{cf-test-org}}
+    space: {{cf-test-space}}
 
 - name: cf-uat
   type: cf-cli-resource
@@ -337,6 +319,8 @@ resources:
     skip_cert_check: {{cf-uat-skip-ssl}}
     username: {{cf-uat-username}}
     password: {{cf-uat-password}}
+    org: {{cf-uat-org}}
+    space: {{cf-uat-space}}
 
 - name: cf-prod
   type: cf-cli-resource
@@ -345,6 +329,8 @@ resources:
     skip_cert_check: {{cf-prod-skip-ssl}}
     username: {{cf-prod-username}}
     password: {{cf-prod-password}}
+    org: {{cf-prod-org}}
+    space: {{cf-prod-space}}
 
 resource_types:
 - name: maven-resource
@@ -357,9 +343,4 @@ resource_types:
   type: docker-image
   source:
     repository: patrickcrocker/cf-cli-resource
-    tag: 1.0.2-rc.3
-
-- name: tracker-resource
-  type: docker-image
-  source:
-    repository: concourse/tracker-resource
+    tag: 1.1.0-rc.3
