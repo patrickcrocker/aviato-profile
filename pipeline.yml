@@ -350,4 +350,4 @@ resource_types:
   type: docker-image
   source:
     repository: patrickcrocker/cf-cli-resource
-    tag: 1.1.0
+    tag: 1.1.1-rc.4
