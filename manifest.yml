@@ -1,7 +1,7 @@
 ---
 applications:
 - name: aviato-profile
-  memory: 512M
+  memory: 1G
   instances: 1
   timeout: 180
   host: aviato-profile
