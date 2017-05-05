@@ -74,31 +74,29 @@ jobs:
       passed: [build]
       trigger: true
     - get: spring-initializd
-  - put: cf-create-org-and-space
+  - put: cf-prepare-env
     resource: cf-test
     params:
       commands:
       - command: create-org
       - command: create-space
-  - put: cf-create-db
-    resource: cf-test
-    params:
-      command: create-service
-      service: {{cf-test-app-db-service}}
-      plan: {{cf-test-app-db-plan}}
-      service_instance: {{cf-test-app-db-si}}
+      - command: create-service
+        service: {{cf-test-app-db-service}}
+        plan: {{cf-test-app-db-plan}}
+        service_instance: {{cf-test-app-db-si}}
   - task: generate-manifest
     file: pipeline-tasks/generate-manifest/task.yml
     params:
-      CF_APP_NAME: {{cf-test-app-name}}
-      CF_APP_HOST: {{cf-test-app-host}}
-      CF_APP_PATH: aviato-profile-*.jar
-      CF_APP_SERVICES: [{{cf-test-app-db-si}}]
+      MF_NAME: {{cf-test-app-name}}
+      MF_HOST: {{cf-test-app-host}}
+      MF_SERVICES: [{{cf-test-app-db-si}}]
+      MF_BUILDPACK: https://github.com/cloudfoundry/java-buildpack.git#v4.0
   - put: cf-push
     resource: cf-test
     params:
       command: zero-downtime-push
       manifest: task-output/manifest.yml
+      path: artifact/aviato-profile-*.jar
       current_app_name: {{cf-test-app-name}}
   - task: integration-tests
     image: spring-initializd
@@ -123,31 +121,29 @@ jobs:
       passed: [test]
       trigger: true
     - get: spring-initializd
-  - put: cf-create-org-and-space
+  - put: cf-prepare-env
     resource: cf-uat
     params:
       commands:
       - command: create-org
       - command: create-space
-  - put: cf-create-db
-    resource: cf-uat
-    params:
-      command: create-service
-      service: {{cf-uat-app-db-service}}
-      plan: {{cf-uat-app-db-plan}}
-      service_instance: {{cf-uat-app-db-si}}
+      - command: create-service
+        service: {{cf-uat-app-db-service}}
+        plan: {{cf-uat-app-db-plan}}
+        service_instance: {{cf-uat-app-db-si}}
   - task: generate-manifest
     file: pipeline-tasks/generate-manifest/task.yml
     params:
-      CF_APP_NAME: {{cf-uat-app-name}}
-      CF_APP_HOST: {{cf-uat-app-host}}
-      CF_APP_PATH: aviato-profile-*.jar
-      CF_APP_SERVICES: [{{cf-uat-app-db-si}}]
+      MF_NAME: {{cf-uat-app-name}}
+      MF_HOST: {{cf-uat-app-host}}
+      MF_SERVICES: [{{cf-uat-app-db-si}}]
+      MF_BUILDPACK: https://github.com/cloudfoundry/java-buildpack.git#v4.0
   - put: cf-push
     resource: cf-uat
     params:
       command: zero-downtime-push
       manifest: task-output/manifest.yml
+      path: artifact/aviato-profile-*.jar
       current_app_name: {{cf-uat-app-name}}
   - task: integration-tests
     image: spring-initializd
@@ -192,31 +188,29 @@ jobs:
       resource: maven-release
       passed: [shipit]
     - get: spring-initializd
-  - put: cf-create-org-and-space
+  - put: cf-prepare-env
     resource: cf-prod
     params:
       commands:
       - command: create-org
       - command: create-space
-  - put: cf-create-db
-    resource: cf-prod
-    params:
-      command: create-service
-      service: {{cf-prod-app-db-service}}
-      plan: {{cf-prod-app-db-plan}}
-      service_instance: {{cf-prod-app-db-si}}
+      - command: create-service
+        service: {{cf-prod-app-db-service}}
+        plan: {{cf-prod-app-db-plan}}
+        service_instance: {{cf-prod-app-db-si}}
   - task: generate-manifest
     file: pipeline-tasks/generate-manifest/task.yml
     params:
-      CF_APP_NAME: {{cf-prod-app-name}}
-      CF_APP_HOST: {{cf-prod-app-host}}
-      CF_APP_PATH: aviato-profile-*.jar
-      CF_APP_SERVICES: [{{cf-prod-app-db-si}}]
+      MF_NAME: {{cf-prod-app-name}}
+      MF_HOST: {{cf-prod-app-host}}
+      MF_SERVICES: [{{cf-prod-app-db-si}}]
+      MF_BUILDPACK: https://github.com/cloudfoundry/java-buildpack.git#v4.0
   - put: cf-push
     resource: cf-prod
     params:
       command: zero-downtime-push
       manifest: task-output/manifest.yml
+      path: artifact/aviato-profile-*.jar
       current_app_name: {{cf-prod-app-name}}
   - task: integration-tests
     image: spring-initializd
@@ -350,4 +344,4 @@ resource_types:
   type: docker-image
   source:
     repository: patrickcrocker/cf-cli-resource
-    tag: 1.1.1-rc.4
+    tag: 1.2.1
