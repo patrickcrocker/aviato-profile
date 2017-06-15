@@ -42,9 +42,7 @@ jobs:
       trigger: true
     - get: version
       params: {pre: rc}
-    - get: spring-initializd
   - task: build
-    image: spring-initializd
     file: pipeline-tasks/build-maven-semver/task.yml
     params:
       <<: *maven-params
@@ -73,7 +71,6 @@ jobs:
       resource: maven-milestone
       passed: [build]
       trigger: true
-    - get: spring-initializd
   - put: cf-prepare-env
     resource: cf-test
     params:
@@ -99,7 +96,6 @@ jobs:
       path: artifact/aviato-profile-*.jar
       current_app_name: {{cf-test-app-name}}
   - task: integration-tests
-    image: spring-initializd
     file: pipeline-tasks/run-maven-itests/task.yml
     params:
       <<: *maven-params
@@ -120,7 +116,6 @@ jobs:
       resource: maven-milestone
       passed: [test]
       trigger: true
-    - get: spring-initializd
   - put: cf-prepare-env
     resource: cf-uat
     params:
@@ -146,7 +141,6 @@ jobs:
       path: artifact/aviato-profile-*.jar
       current_app_name: {{cf-uat-app-name}}
   - task: integration-tests
-    image: spring-initializd
     file: pipeline-tasks/run-maven-itests/task.yml
     params:
       <<: *maven-params
@@ -187,7 +181,6 @@ jobs:
     - get: artifact
       resource: maven-release
       passed: [shipit]
-    - get: spring-initializd
   - put: cf-prepare-env
     resource: cf-prod
     params:
@@ -213,7 +206,6 @@ jobs:
       path: artifact/aviato-profile-*.jar
       current_app_name: {{cf-prod-app-name}}
   - task: integration-tests
-    image: spring-initializd
     file: pipeline-tasks/run-maven-itests/task.yml
     params:
       <<: *maven-params
@@ -254,12 +246,6 @@ resources:
   source:
     uri: {{pipeline-tasks-git-uri}}
     branch: {{pipeline-tasks-git-branch}}
-
-- name: spring-initializd
-  type: docker-image
-  source:
-    repository: patrickcrocker/spring-initializd
-    tag: spring-boot-1.5.2.RELEASE-1.0.0-rc.5
 
 - name: aviato-profile
   type: git
@@ -337,11 +323,11 @@ resource_types:
 - name: maven-resource
   type: docker-image
   source:
-    repository: patrickcrocker/maven-resource
+    repository: pivotalpa/maven-resource
     tag: 1.3.1
 
 - name: cf-cli-resource
   type: docker-image
   source:
-    repository: patrickcrocker/cf-cli-resource
+    repository: pivotalpa/cf-cli-resource
     tag: 2.0.0
