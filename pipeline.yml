@@ -1,3 +1,11 @@
+# This pipeline requires Concourse 3.3+ for caching features. To fall back to
+# an earlier version of Concourse, replace these:
+#   "pipeline-tasks/build-maven-semver-cache/task.yml"
+#   "pipeline-tasks/run-maven-itests-cache/task.yml"
+# with these:
+#   "pipeline-tasks/build-maven-semver/task.yml"
+#   "pipeline-tasks/run-maven-itests-cache/task.yml"
+#
 ---
 groups:
 - name: all
@@ -29,6 +37,7 @@ maven-params: &maven-params
   MAVEN_REPO_MIRROR: {{maven-mirror-url}}
   MAVEN_REPO_USERNAME: {{maven-mirror-username}}
   MAVEN_REPO_PASSWORD: {{maven-mirror-password}}
+  MAVEN_REPO_CACHE_ENABLE: true
 
 jobs:
 - name: build
@@ -43,7 +52,7 @@ jobs:
     - get: version
       params: {pre: rc}
   - task: build
-    file: pipeline-tasks/build-maven-semver/task.yml
+    file: pipeline-tasks/build-maven-semver-cache/task.yml
     params:
       <<: *maven-params
   - put: maven-milestone
@@ -87,7 +96,7 @@ jobs:
       MF_NAME: {{cf-test-app-name}}
       MF_HOST: {{cf-test-app-host}}
       MF_SERVICES: [{{cf-test-app-db-si}}]
-      MF_BUILDPACK: https://github.com/cloudfoundry/java-buildpack.git#v4.0
+      MF_BUILDPACK: https://github.com/cloudfoundry/java-buildpack.git#v4.2
   - put: cf-push
     resource: cf-test
     params:
@@ -96,7 +105,7 @@ jobs:
       path: artifact/aviato-profile-*.jar
       current_app_name: {{cf-test-app-name}}
   - task: integration-tests
-    file: pipeline-tasks/run-maven-itests/task.yml
+    file: pipeline-tasks/run-maven-itests-cache/task.yml
     params:
       <<: *maven-params
       APP_URL: {{cf-test-app-url}}
@@ -132,7 +141,7 @@ jobs:
       MF_NAME: {{cf-uat-app-name}}
       MF_HOST: {{cf-uat-app-host}}
       MF_SERVICES: [{{cf-uat-app-db-si}}]
-      MF_BUILDPACK: https://github.com/cloudfoundry/java-buildpack.git#v4.0
+      MF_BUILDPACK: https://github.com/cloudfoundry/java-buildpack.git#v4.2
   - put: cf-push
     resource: cf-uat
     params:
@@ -141,7 +150,7 @@ jobs:
       path: artifact/aviato-profile-*.jar
       current_app_name: {{cf-uat-app-name}}
   - task: integration-tests
-    file: pipeline-tasks/run-maven-itests/task.yml
+    file: pipeline-tasks/run-maven-itests-cache/task.yml
     params:
       <<: *maven-params
       APP_URL: {{cf-uat-app-url}}
@@ -197,7 +206,7 @@ jobs:
       MF_NAME: {{cf-prod-app-name}}
       MF_HOST: {{cf-prod-app-host}}
       MF_SERVICES: [{{cf-prod-app-db-si}}]
-      MF_BUILDPACK: https://github.com/cloudfoundry/java-buildpack.git#v4.0
+      MF_BUILDPACK: https://github.com/cloudfoundry/java-buildpack.git#v4.2
   - put: cf-push
     resource: cf-prod
     params:
@@ -206,7 +215,7 @@ jobs:
       path: artifact/aviato-profile-*.jar
       current_app_name: {{cf-prod-app-name}}
   - task: integration-tests
-    file: pipeline-tasks/run-maven-itests/task.yml
+    file: pipeline-tasks/run-maven-itests-cache/task.yml
     params:
       <<: *maven-params
       APP_URL: {{cf-prod-app-url}}
@@ -330,4 +339,4 @@ resource_types:
   type: docker-image
   source:
     repository: pivotalpa/cf-cli-resource
-    tag: 2.0.0
+    tag: 2.1.0-rc.2
