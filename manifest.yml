@@ -1,10 +1,11 @@
 ---
 applications:
 - name: aviato-profile
+  host: aviato-profile
   memory: 1G
   instances: 1
   timeout: 180
-  host: aviato-profile
+  buildpack: https://github.com/cloudfoundry/java-buildpack#v4.5
   path: target/aviato-profile-1.0.0-rc.0.jar
   env:
     JAVA_OPTS: -Djava.security.egd=file:///dev/urandom
