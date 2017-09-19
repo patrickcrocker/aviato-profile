@@ -339,4 +339,4 @@ resource_types:
   type: docker-image
   source:
     repository: pivotalpa/cf-cli-resource
-    tag: 2.1.0-rc.2
+    tag: 2.1.1-rc.3
