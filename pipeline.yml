@@ -96,7 +96,6 @@ jobs:
       MF_NAME: {{cf-test-app-name}}
       MF_HOST: {{cf-test-app-host}}
       MF_SERVICES: [{{cf-test-app-db-si}}]
-      MF_BUILDPACK: https://github.com/cloudfoundry/java-buildpack.git#v4.2
   - put: cf-push
     resource: cf-test
     params:
@@ -141,7 +140,6 @@ jobs:
       MF_NAME: {{cf-uat-app-name}}
       MF_HOST: {{cf-uat-app-host}}
       MF_SERVICES: [{{cf-uat-app-db-si}}]
-      MF_BUILDPACK: https://github.com/cloudfoundry/java-buildpack.git#v4.2
   - put: cf-push
     resource: cf-uat
     params:
@@ -206,7 +204,6 @@ jobs:
       MF_NAME: {{cf-prod-app-name}}
       MF_HOST: {{cf-prod-app-host}}
       MF_SERVICES: [{{cf-prod-app-db-si}}]
-      MF_BUILDPACK: https://github.com/cloudfoundry/java-buildpack.git#v4.2
   - put: cf-push
     resource: cf-prod
     params:
@@ -339,4 +336,4 @@ resource_types:
   type: docker-image
   source:
     repository: pivotalpa/cf-cli-resource
-    tag: 2.1.1-rc.3
+    tag: 2.2.0
