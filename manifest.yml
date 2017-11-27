@@ -5,7 +5,8 @@ applications:
   memory: 1G
   instances: 1
   timeout: 180
-  buildpack: https://github.com/cloudfoundry/java-buildpack#v4.5
-  path: target/aviato-profile-1.0.0-rc.0.jar
+  path: content
+  buildpack: https://github.com/cloudfoundry/multi-buildpack.git
   env:
     JAVA_OPTS: -Djava.security.egd=file:///dev/urandom
+    ORACLE_INSTANT_CLIENT_URL: http://downloads.local.pcfdev.io/instantclient-basiclite-linux.x64-12.1.0.2.0.zip
