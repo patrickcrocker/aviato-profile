@@ -126,7 +126,7 @@ jobs:
     - get: artifact
       resource: maven-milestone
       passed: [test]
-      trigger: true
+      # trigger: true
   - put: cf-prepare-env
     resource: cf-uat
     params:
@@ -341,4 +341,4 @@ resource_types:
   type: docker-image
   source:
     repository: pivotalpa/cf-cli-resource
-    tag: 2.3.0
+    tag: 2.3.1-rc.3
