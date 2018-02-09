@@ -1,8 +1,8 @@
 ---
 applications:
 - name: aviato-profile
-  host: aviato-profile
   memory: 1G
   timeout: 180
+  path: target/aviato-profile-1.0.0-rc.0.jar
   env:
     JAVA_OPTS: -Djava.security.egd=file:///dev/urandom
