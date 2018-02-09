@@ -90,9 +90,7 @@ jobs:
         service: {{cf-test-app-db-service}}
         plan: {{cf-test-app-db-plan}}
         service_instance: {{cf-test-app-db-si}}
-      - command: create-user-provided-service
-        service_instance: my-other-service
-        credentials: '{"username":"me","password":"super secret!","config":"this is more text"}'
+        wait_for_service: true
   - task: generate-manifest
     file: pipeline-tasks/generate-manifest/task.yml
     params:
@@ -137,6 +135,7 @@ jobs:
         service: {{cf-uat-app-db-service}}
         plan: {{cf-uat-app-db-plan}}
         service_instance: {{cf-uat-app-db-si}}
+        wait_for_service: true
   - task: generate-manifest
     file: pipeline-tasks/generate-manifest/task.yml
     params:
@@ -201,6 +200,7 @@ jobs:
         service: {{cf-prod-app-db-service}}
         plan: {{cf-prod-app-db-plan}}
         service_instance: {{cf-prod-app-db-si}}
+        wait_for_service: true
   - task: generate-manifest
     file: pipeline-tasks/generate-manifest/task.yml
     params:
@@ -341,4 +341,4 @@ resource_types:
   type: docker-image
   source:
     repository: pivotalpa/cf-cli-resource
-    tag: 2.3.1
+    tag: 2.4.0-rc.5
