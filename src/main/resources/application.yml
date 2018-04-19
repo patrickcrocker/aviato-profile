@@ -11,5 +11,5 @@ management:
 info:
   app:
     version:
-      java: @java.version@
-      spring: @spring.version@
+      java: "@java.version@"
+      spring: "@spring.version@"
