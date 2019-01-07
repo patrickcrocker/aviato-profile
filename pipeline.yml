@@ -1,11 +1,3 @@
-# This pipeline requires Concourse 3.3+ for caching features. To fall back to
-# an earlier version of Concourse, replace these:
-#   "pipeline-tasks/build-maven-semver-cache/task.yml"
-#   "pipeline-tasks/run-maven-itests-cache/task.yml"
-# with these:
-#   "pipeline-tasks/build-maven-semver/task.yml"
-#   "pipeline-tasks/run-maven-itests-cache/task.yml"
-#
 ---
 groups:
 - name: all
@@ -280,8 +272,6 @@ resources:
     artifact: com.aviato:aviato-profile:jar
     username: {{maven-milestone-username}}
     password: {{maven-milestone-password}}
-    skip_cert_check: {{maven-milestone-skip-ssl}}
-    repository_cert: {{maven-milestone-cert}}
 
 - name: maven-release
   type: maven-resource
@@ -290,8 +280,6 @@ resources:
     artifact: com.aviato:aviato-profile:jar
     username: {{maven-release-username}}
     password: {{maven-release-password}}
-    skip_cert_check: {{maven-release-skip-ssl}}
-    repository_cert: {{maven-release-cert}}
 
 - name: tracker
   type: tracker
@@ -304,7 +292,6 @@ resources:
   type: cf-cli-resource
   source:
     api: {{cf-test-api-url}}
-    skip_cert_check: {{cf-test-skip-ssl}}
     username: {{cf-test-username}}
     password: ((cf-test-password))
     org: {{cf-test-org}}
@@ -314,7 +301,6 @@ resources:
   type: cf-cli-resource
   source:
     api: {{cf-uat-api-url}}
-    skip_cert_check: {{cf-uat-skip-ssl}}
     username: {{cf-uat-username}}
     password: ((cf-uat-password))
     org: {{cf-uat-org}}
@@ -324,7 +310,6 @@ resources:
   type: cf-cli-resource
   source:
     api: {{cf-prod-api-url}}
-    skip_cert_check: {{cf-prod-skip-ssl}}
     username: {{cf-prod-username}}
     password: ((cf-prod-password))
     org: {{cf-prod-org}}
