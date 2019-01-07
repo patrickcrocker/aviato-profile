@@ -334,11 +334,11 @@ resource_types:
 - name: maven-resource
   type: docker-image
   source:
-    repository: pivotalpa/maven-resource
-    tag: 1.3.5
+    repository: nulldriver/maven-resource
+    tag: latest
 
 - name: cf-cli-resource
   type: docker-image
   source:
-    repository: pivotalpa/cf-cli-resource
-    tag: 2.5.1
+    repository: nulldriver/cf-cli-resource
+    tag: latest
