@@ -36,7 +36,7 @@ jobs:
   public: true
   serial_groups: [version]
   plan:
-  - aggregate:
+  - in_parallel:
     - get: pipeline-tasks
     - get: project
       resource: aviato-profile
@@ -61,7 +61,7 @@ jobs:
   public: true
   serial_groups: [version]
   plan:
-  - aggregate:
+  - in_parallel:
     - get: pipeline-tasks
     - get: project
       resource: aviato-profile
@@ -106,7 +106,7 @@ jobs:
   public: true
   serial_groups: [version]
   plan:
-  - aggregate:
+  - in_parallel:
     - get: pipeline-tasks
     - get: project
       resource: aviato-profile
@@ -151,7 +151,7 @@ jobs:
   public: true
   serial_groups: [version]
   plan:
-  - aggregate:
+  - in_parallel:
     - get: project
       resource: aviato-profile
       passed: [uat]
@@ -172,7 +172,7 @@ jobs:
   public: true
   serial_groups: [version]
   plan:
-  - aggregate:
+  - in_parallel:
     - get: pipeline-tasks
     - get: project
       resource: aviato-profile
